@@ -1,0 +1,284 @@
+<html>
+
+<head>
+  <title>
+    {% load static %}
+    {% load cfilters %}
+    {% block title %}
+    Lawyer Request systems || Home
+    {% endblock %}
+  </title>
+  <script src="https://code.jquery.com/jquery-1.12.3.js" integrity="sha256-1XMpEtA4eKXNNpXcJ1pmMPs8JV+nwLdEqwiJeCQEkyc="
+    crossorigin="anonymous"></script>
+  <!-- Compiled and minified CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/css/materialize.min.css">
+
+  <!-- Compiled and minified JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+
+</head>
+
+<body>
+
+  <nav style="background-color:#4e342e">
+    <div class="container">
+      <div class="nav-wrapper" style="color:green">
+        <h4 class="brand-logo">Lawyer Booking Automation Management Systems</h4>
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+          <li><a href="{% block link %}{% url 'login' %}{% endblock %}">{% block linkname %}Login{% endblock %}</a></li>
+          <li>{% block ll %}{% endblock %}</li>
+
+        </ul>
+
+        <ul class="right side-nav" id="nav-mobile">
+          <li class="hide-on-small-only"><a href="parallax.html"><i class="mdi-navigation-arrow-back"></i></a></li>
+        </ul>
+        <a class="button-collapse" href="#" data-activates='nav-mobile'><i class="mdi-navigation-menu"></i></a>
+      </div>
+    </div>
+  </nav>
+
+
+  <style type="text/css">
+    .errorlist li {
+      color: red;
+    }
+
+    .messages li {
+      color: green;
+    }
+
+    .messages .error {
+      color: red;
+    }
+
+    .parallax-container {
+      height: 300px;
+    }
+  </style>
+  {% block content %}
+
+
+  <div class="parallax-container">
+    <div class="parallax"><img src="{% static 'images/pic.jpg' %}"></div>
+  </div>
+  <div class="section white">
+    <div class="row container">
+      <h2 class="header">Attorney/Victim</h2>
+      <p class="grey-text text-darken-3 lighten-3">Your Legal Advisor. Signup or login to get started</p>
+      {% if messages %}
+      <ul class="messages">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }} " {% endif %}>{{ message }}</li>
+          {% endfor %}
+      </ul>
+      {% endif %}
+      <div class="row">
+        <form method='POST' class="col s6" action=''>{% csrf_token %}
+          <div class="row">
+            {% for field in form %}
+            <div class="input-field col s12">
+              {% if field.name == "password" %}
+              {{ field|addtype:"password" }}
+              {% else %}
+              {{ field }}
+              {% endif %}
+              {{ field.label_tag }}
+              <p style="color:red">{{ field.errors }}</p>
+            </div>
+            {% endfor %}
+          </div>
+          <button class="btn waves-effect waves-light" type="submit" name="action">Sign Up
+            <i class="material-icons right">send</i>
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+
+
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $('.parallax').parallax();
+    });
+
+  </script>
+  {% endblock %}
+
+
+
+
+  <script type="text/javascript">
+
+
+    $('.datepicker').pickadate({
+      selectMonths: true, // Creates a dropdown to control month
+      selectYears: 15,// Creates a dropdown of 15 years to control year
+      format: 'yyyy-mm-dd',
+    });
+
+
+    $.fn.serializeObject = function () {
+      var o = {};
+      var a = this.serializeArray();
+      $.each(a, function () {
+        if (o[this.name]) {
+          if (!o[this.name].push) {
+            o[this.name] = [o[this.name]];
+          }
+          o[this.name].push(this.value || '');
+        } else {
+          o[this.name] = this.value || '';
+        }
+      });
+      return o;
+    };
+
+    function getcookies() {
+
+      var cookievalue = document.cookie.split(';');
+      var obj = {}
+      for (var i = 0; i < cookievalue.length; i++) {
+        tt = cookievalue[i];
+        if (tt != undefined) {
+          var temp = tt.split('=');
+          obj[temp[0].trim()] = temp[1].trim();
+        }
+      }
+      return obj;
+
+    }
+
+    $(function () {
+
+
+      $('#submit').click(function () {
+        // var data = $('form').data();
+        var cookies = getcookies();
+        var temp = { 'X-CSRFToken': cookies['csrftoken'] };
+
+
+        $.ajax({
+          url: '{% url "userdashboard" %}',
+          type: 'POST',
+          dataType: 'json',
+          async: false,
+          data: JSON.stringify($('form').serializeObject()),
+          // data:$('form').serializeArray(),
+          headers: temp,
+          contentType: 'application/json; charset=utf-8',
+          success: function (data) {
+            $('#bookerror').empty();
+            if (data['msg']) {
+              $('#bookerror').append(data['msg']);
+            }
+          }
+
+
+        });
+      });
+
+
+
+
+    });
+
+
+  </script>
+
+
+  {% block script %}
+
+  {% endblock %}
+
+
+</body>
+
+
+<footer class="page-footer" style="background-color:#0e2339">
+  <style>
+    footer {
+      padding: 0px 0px 0px 0px;
+      background-color: black;
+      margin: 0px;
+    }
+
+    .fa {
+      padding: 20px;
+      font-size: 23px;
+      width: 60px;
+      text-align: center;
+      text-decoration: none;
+      margin: 5px 2px;
+      border-radius: 50%;
+    }
+
+    .fa:hover {
+      opacity: 0.5;
+      text-decoration: none;
+    }
+
+    .fa-facebook {
+      background: #3B5998;
+      color: white;
+      margin-top: 30px;
+    }
+
+    .fa-whatsapp {
+      background: #25d366;
+      color: white;
+    }
+
+    .fa-twitter {
+      background: #55ACEE;
+      color: white;
+    }
+
+    .fa-instagram {
+      background: #125688;
+      color: white;
+    }
+
+    p {
+      text-align: center;
+
+    }
+  </style>
+  <div class="container">
+    <div class="row">
+      <div class="col l6 s12">
+        <h5 class="white-text">Lawyer Booking Automation Management Systems</h5>
+        <h4>Ammount For Victims to Paid Lawyer</h4>
+
+        Patent attorney: $180,000.
+        Intellectual property (IP) attorney: $162,000.
+        Trial lawyer: $134,000.
+        Tax attorney: $122,000.
+        Corporate lawyer: $115,000.
+      </div>
+      <p>
+        <a href="https://facebook.com/" class="fa fa-facebook"></a>
+        <a href="#" class="fa fa-whatsapp"></a>
+        <a href="https://instagram.com/" class="fa fa-instagram"></a>
+        <a href="https://twitter.com/" class="fa fa-twitter"></a>
+      </p>
+
+    </div>
+  </div>
+  <div class="footer-copyright">
+    <div class="container">
+      © 2024 Copyright 0701 C
+    </div>
+  </div>
+
+  </head>
+</footer>
+
+
+
+</html>
